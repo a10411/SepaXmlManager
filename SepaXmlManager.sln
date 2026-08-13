@@ -1,9 +1,33 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36511.14 d17.14
+VisualStudioVersion = 17.14.36511.14
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SepaXmlManager.Models", "SepaXmlManager.Models\SepaXmlManager.Models.csproj", "{57263F76-ACA7-A744-01BE-6758AF45A5C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SepaXmlManager.tests", "SepaXmlManager.tests\SepaXmlManager.tests.csproj", "{BA3A52E0-64AA-474C-D04C-86A1DE9DA74D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SepaXmlManager.Api", "SepaXmlManager.Api\SepaXmlManager.Api.csproj", "{27E577D8-39EC-06B2-0A55-D8A44B2AB2BF}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{57263F76-ACA7-A744-01BE-6758AF45A5C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57263F76-ACA7-A744-01BE-6758AF45A5C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57263F76-ACA7-A744-01BE-6758AF45A5C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57263F76-ACA7-A744-01BE-6758AF45A5C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA3A52E0-64AA-474C-D04C-86A1DE9DA74D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA3A52E0-64AA-474C-D04C-86A1DE9DA74D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA3A52E0-64AA-474C-D04C-86A1DE9DA74D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA3A52E0-64AA-474C-D04C-86A1DE9DA74D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27E577D8-39EC-06B2-0A55-D8A44B2AB2BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27E577D8-39EC-06B2-0A55-D8A44B2AB2BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27E577D8-39EC-06B2-0A55-D8A44B2AB2BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27E577D8-39EC-06B2-0A55-D8A44B2AB2BF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
