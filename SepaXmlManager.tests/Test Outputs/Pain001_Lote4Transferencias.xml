@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.09">
+  <CstmrCdtTrfInitn>
+    <GrpHdr>
+      <MsgId>MSG-TESTE-002</MsgId>
+      <CreDtTm>2026-08-08T15:54:07.6880286+01:00</CreDtTm>
+      <NbOfTxs>4</NbOfTxs>
+      <InitgPty>
+        <Nm>Empresa Exemplo Lda</Nm>
+      </InitgPty>
+    </GrpHdr>
+    <PmtInf>
+      <PmtInfId>PAYMENT-INFO-001</PmtInfId>
+      <PmtMtd>TRF</PmtMtd>
+      <ReqdExctnDt>
+        <Dt>2026-08-08</Dt>
+      </ReqdExctnDt>
+      <Dbtr>
+        <Nm>Empresa Exemplo Lda</Nm>
+      </Dbtr>
+      <DbtrAcct>
+        <Id>
+          <IBAN>PT50000201231234567890154</IBAN>
+        </Id>
+      </DbtrAcct>
+      <DbtrAgt>
+        <FinInstnId>
+          <BICFI>CGDPTPLX</BICFI>
+        </FinInstnId>
+      </DbtrAgt>
+      <ChrgBr>SLEV</ChrgBr>
+      <CdtTrfTxInf>
+        <PmtId>
+          <EndToEndId>PAYMENT-001</EndToEndId>
+        </PmtId>
+        <Amt>
+          <InstdAmt Ccy="EUR">1100.00</InstdAmt>
+        </Amt>
+        <Cdtr>
+          <Nm>João Silva</Nm>
+        </Cdtr>
+        <CdtrAcct>
+          <Id>
+            <IBAN>PT50000201231234567890155</IBAN>
+          </Id>
+        </CdtrAcct>
+        <RmtInf>
+          <Ustrd>Vencimento Maio 2026</Ustrd>
+        </RmtInf>
+      </CdtTrfTxInf>
+      <CdtTrfTxInf>
+        <PmtId>
+          <EndToEndId>PAYMENT-002</EndToEndId>
+        </PmtId>
+        <Amt>
+          <InstdAmt Ccy="EUR">1200.00</InstdAmt>
+        </Amt>
+        <Cdtr>
+          <Nm>Maria Santos</Nm>
+        </Cdtr>
+        <CdtrAcct>
+          <Id>
+            <IBAN>PT50000201231234567890156</IBAN>
+          </Id>
+        </CdtrAcct>
+        <RmtInf>
+          <Ustrd>Vencimento Abril 2026</Ustrd>
+        </RmtInf>
+      </CdtTrfTxInf>
+      <CdtTrfTxInf>
+        <PmtId>
+          <EndToEndId>PAYMENT-003</EndToEndId>
+        </PmtId>
+        <Amt>
+          <InstdAmt Ccy="EUR">1300.00</InstdAmt>
+        </Amt>
+        <Cdtr>
+          <Nm>Carlos Oliveira</Nm>
+        </Cdtr>
+        <CdtrAcct>
+          <Id>
+            <IBAN>PT50000201231234567890157</IBAN>
+          </Id>
+        </CdtrAcct>
+        <RmtInf>
+          <Ustrd>Vencimento Fevereiro 2026</Ustrd>
+        </RmtInf>
+      </CdtTrfTxInf>
+      <CdtTrfTxInf>
+        <PmtId>
+          <EndToEndId>PAYMENT-004</EndToEndId>
+        </PmtId>
+        <Amt>
+          <InstdAmt Ccy="EUR">1400.00</InstdAmt>
+        </Amt>
+        <Cdtr>
+          <Nm>Ana Costa</Nm>
+        </Cdtr>
+        <CdtrAcct>
+          <Id>
+            <IBAN>PT50000201231234567890158</IBAN>
+          </Id>
+        </CdtrAcct>
+        <RmtInf>
+          <Ustrd>Vencimento Janeiro 2026</Ustrd>
+        </RmtInf>
+      </CdtTrfTxInf>
+    </PmtInf>
+  </CstmrCdtTrfInitn>
+</Document>

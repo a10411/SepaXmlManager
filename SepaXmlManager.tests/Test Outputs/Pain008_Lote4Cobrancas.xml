@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.008.001.08">
+  <CstmrDrctDbtInitn>
+    <GrpHdr>
+      <MsgId>MSG-TESTE-008</MsgId>
+      <CreDtTm>2026-08-08T16:59:00.4002541+01:00</CreDtTm>
+      <NbOfTxs>4</NbOfTxs>
+      <CtrlSum>5000.00</CtrlSum>
+      <InitgPty>
+        <Nm>Empresa Exemplo Lda</Nm>
+      </InitgPty>
+    </GrpHdr>
+    <PmtInf>
+      <PmtInfId>COLLECTION-INFO-001</PmtInfId>
+      <PmtMtd>DD</PmtMtd>
+      <PmtTpInf />
+      <ReqdColltnDt>2026-08-13</ReqdColltnDt>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>COB-001</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">1100.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>MAND-JS-001</MndtId>
+            <DtOfSgntr>2023-01-15</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BICFI>BPIXPTPL</BICFI>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>João Silva</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>PT50000201231234567890155</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Mensalidade Ginásio</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>COB-002</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">1200.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>MAND-MS-002</MndtId>
+            <DtOfSgntr>2024-05-10</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BICFI>MILLPTPL</BICFI>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Maria Santos</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>PT50000201231234567890156</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Mensalidade Ginásio</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>COB-003</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">1300.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>MAND-CO-003</MndtId>
+            <DtOfSgntr>2025-02-20</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BICFI>NOVBPTPL</BICFI>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Carlos Oliveira</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>PT50000201231234567890157</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Aulas Personalizadas</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+      <DrctDbtTxInf>
+        <PmtId>
+          <EndToEndId>COB-004</EndToEndId>
+        </PmtId>
+        <InstdAmt Ccy="EUR">1400.00</InstdAmt>
+        <DrctDbtTx>
+          <MndtRltdInf>
+            <MndtId>MAND-AC-004</MndtId>
+            <DtOfSgntr>2026-01-05</DtOfSgntr>
+          </MndtRltdInf>
+        </DrctDbtTx>
+        <DbtrAgt>
+          <FinInstnId>
+            <BICFI>CGDPTPLX</BICFI>
+          </FinInstnId>
+        </DbtrAgt>
+        <Dbtr>
+          <Nm>Ana Costa</Nm>
+        </Dbtr>
+        <DbtrAcct>
+          <Id>
+            <IBAN>PT50000201231234567890158</IBAN>
+          </Id>
+        </DbtrAcct>
+        <RmtInf>
+          <Ustrd>Plano Anual</Ustrd>
+        </RmtInf>
+      </DrctDbtTxInf>
+    </PmtInf>
+  </CstmrDrctDbtInitn>
+</Document>
