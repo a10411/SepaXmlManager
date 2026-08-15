@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -17,15 +17,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\SepaXmlManager.Models\SepaXmlManager.Models\SepaXmlManager.Models.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Test Outputs\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SepaXmlManager.Models\SepaXmlManager.Models.csproj" />
   </ItemGroup>
 
 </Project>

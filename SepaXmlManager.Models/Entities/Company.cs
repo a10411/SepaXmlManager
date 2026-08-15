@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SepaXmlManager.Models.Entidades
+namespace SepaXmlManager.Models.Entities
 {
     public class Company
     {
@@ -28,7 +28,7 @@ namespace SepaXmlManager.Models.Entidades
         public string IdentityCreditor { get; set; } = string.Empty; // Opcional, mas obrigatório para pain.008
 
         // Relacionamentos (1 Empresa tem Muitos Lotes e Contactos)
-        public List<Contacts> Contacts { get; set; } = new List<Contacts>();
+        public List<Contact> Contacts { get; set; } = new List<Contact>();
         public List<TransferBatch> Batches { get; set; } = new List<TransferBatch>();
     }
 }

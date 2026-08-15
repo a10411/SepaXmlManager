@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SepaXmlManager.Models.Entidades
+namespace SepaXmlManager.Models.Entities
 {
-    public class Contacts
+    public class Contact
     {
         [Key]
         public int Id { get; set; }
@@ -19,6 +19,8 @@ namespace SepaXmlManager.Models.Entidades
 
         [Required, MaxLength(34)]
         public string IBAN { get; set; } = string.Empty;
+
+        public bool IsActive { get; set; } = true;
 
         [MaxLength(11)]
         public string BIC { get; set; } = string.Empty;

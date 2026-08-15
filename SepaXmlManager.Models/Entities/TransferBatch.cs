@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SepaXmlManager.Models.Entidades
+namespace SepaXmlManager.Models.Entities
 {
     public class TransferBatch
     {
@@ -30,6 +30,6 @@ namespace SepaXmlManager.Models.Entidades
 
         // Relacionamentos
         public Company Company { get; set; } = null!;
-        public List<Transaction> Transactions { get; set; } = new List<Transaction>();
+        public List<Transaction> Transaction { get; set; } = new List<Transaction>();
     }
 }
