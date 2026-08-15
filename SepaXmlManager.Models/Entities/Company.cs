@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace SepaXmlManager.Models.Entidades
 {
-    public class Empresa
+    public class Company
     {
         [Key]
         public int Id { get; set; }
 
         [Required, MaxLength(100)]
-        public string Nome { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
 
         [Required, MaxLength(20)]
         public string NIF { get; set; } = string.Empty;
@@ -25,10 +25,10 @@ namespace SepaXmlManager.Models.Entidades
         public string BIC { get; set; } = string.Empty;
 
         [MaxLength(35)]
-        public string IdentificadorCredor { get; set; } = string.Empty; // Opcional, mas obrigatório para pain.008
+        public string IdentityCreditor { get; set; } = string.Empty; // Opcional, mas obrigatório para pain.008
 
         // Relacionamentos (1 Empresa tem Muitos Lotes e Contactos)
-        public List<Contacto> Contactos { get; set; } = new List<Contacto>();
-        public List<LoteTransferencia> Lotes { get; set; } = new List<LoteTransferencia>();
+        public List<Contacts> Contacts { get; set; } = new List<Contacts>();
+        public List<TransferBatch> Batches { get; set; } = new List<TransferBatch>();
     }
 }

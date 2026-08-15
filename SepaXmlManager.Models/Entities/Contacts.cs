@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 
 namespace SepaXmlManager.Models.Entidades
 {
-    public class Contacto
+    public class Contacts
     {
         [Key]
         public int Id { get; set; }
 
-        public int EmpresaId { get; set; } // Foreign Key
+        public int CompanyId { get; set; } // Foreign Key
 
         [Required, MaxLength(100)]
-        public string Nome { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
 
         [Required, MaxLength(34)]
         public string IBAN { get; set; } = string.Empty;
@@ -24,12 +24,12 @@ namespace SepaXmlManager.Models.Entidades
         public string BIC { get; set; } = string.Empty;
 
         [MaxLength(35)]
-        public string ReferenciaMandato { get; set; } = string.Empty;// Para pain.008
+        public string? MandateReference { get; set; } = string.Empty;// Para pain.008
 
-        public DateTime? DataAssinaturaMandato { get; set; } // Para pain.008
+        public DateTime? DateSignatureMandate { get; set; } // Para pain.008
 
         // Relacionamentos
-        public Empresa Empresa { get; set; } = null!;
-        public List<Transacao> Transacoes { get; set; } = new List<Transacao>();
+        public Company Company { get; set; } = null!;
+        public List<Transaction> Transaction { get; set; } = new List<Transaction>();
     }
 }

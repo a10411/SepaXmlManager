@@ -7,24 +7,24 @@ using System.Threading.Tasks;
 
 namespace SepaXmlManager.Models.Entidades
 {
-    public class Transacao
+    public class Transaction
     {
         [Key]
         public int Id { get; set; }
 
-        public int LoteTransferenciaId { get; set; } // Foreign Key
-        public int ContactoId { get; set; } // Foreign Key
+        public int TransferBatchID { get; set; } // Foreign Key
+        public int ContactID { get; set; } // Foreign Key
 
         [Required, MaxLength(35)]
         public string EndToEndId { get; set; } = string.Empty;
 
-        public decimal Montante { get; set; }
+        public decimal Amount { get; set; }
 
         [MaxLength(140)]
-        public string Descricao { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
 
         // Relacionamentos
-        public LoteTransferencia LoteTransferencia { get; set; } = null!;
-        public Contacto Contacto { get; set; } = null!;
+        public TransferBatch TransferBatch { get; set; } = null!;
+        public Contacts Contact { get; set; } = null!;
     }
 }
