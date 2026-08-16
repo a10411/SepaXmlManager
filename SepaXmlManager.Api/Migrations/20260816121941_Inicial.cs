@@ -59,7 +59,7 @@ namespace SepaXmlManager.Api.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CompanyID = table.Column<int>(type: "int", nullable: false),
+                    CompanyId = table.Column<int>(type: "int", nullable: false),
                     MsgId = table.Column<string>(type: "nvarchar(35)", maxLength: 35, nullable: false),
                     DateCreation = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TypeOperation = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
@@ -71,8 +71,8 @@ namespace SepaXmlManager.Api.Migrations
                 {
                     table.PrimaryKey("PK_TransferBatches", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TransferBatches_Companies_CompanyID",
-                        column: x => x.CompanyID,
+                        name: "FK_TransferBatches_Companies_CompanyId",
+                        column: x => x.CompanyId,
                         principalTable: "Companies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -123,9 +123,9 @@ namespace SepaXmlManager.Api.Migrations
                 column: "TransferBatchId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TransferBatches_CompanyID",
+                name: "IX_TransferBatches_CompanyId",
                 table: "TransferBatches",
-                column: "CompanyID");
+                column: "CompanyId");
         }
 
         /// <inheritdoc />

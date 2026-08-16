@@ -147,7 +147,7 @@ namespace SepaXmlManager.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CompanyID")
+                    b.Property<int>("CompanyId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DateCreation")
@@ -175,7 +175,7 @@ namespace SepaXmlManager.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CompanyID");
+                    b.HasIndex("CompanyId");
 
                     b.ToTable("TransferBatches");
                 });
@@ -214,7 +214,7 @@ namespace SepaXmlManager.Api.Migrations
                 {
                     b.HasOne("SepaXmlManager.Models.Entities.Company", "Company")
                         .WithMany("Batches")
-                        .HasForeignKey("CompanyID")
+                        .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

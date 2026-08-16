@@ -12,7 +12,7 @@ namespace SepaXmlManager.Models.Entities
         [Key]
         public int Id { get; set; }
 
-        public int CompanyID { get; set; } // Foreign Key
+        public int CompanyId { get; set; } // Foreign Key
 
         [Required, MaxLength(35)]
         public string MsgId { get; set; } = string.Empty;
