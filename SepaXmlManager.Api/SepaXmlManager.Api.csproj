@@ -21,10 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\SepaXmlManager.Models\SepaXmlManager.Models.csproj" />
   </ItemGroup>
 

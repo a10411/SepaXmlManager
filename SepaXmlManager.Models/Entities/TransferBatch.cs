@@ -28,6 +28,8 @@ namespace SepaXmlManager.Models.Entities
 
         public string FilePath { get; set; } = string.Empty;
 
+        
+
         // Relacionamentos
         public Company Company { get; set; } = null!;
         public List<Transaction> Transaction { get; set; } = new List<Transaction>();

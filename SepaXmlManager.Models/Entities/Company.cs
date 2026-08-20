@@ -23,6 +23,7 @@ namespace SepaXmlManager.Models.Entities
 
         [Required, MaxLength(11)]
         public string BIC { get; set; } = string.Empty;
+        public bool IsActive { get; set; } = true;
 
         [MaxLength(35)]
         public string IdentityCreditor { get; set; } = string.Empty; // Opcional, mas obrigatório para pain.008

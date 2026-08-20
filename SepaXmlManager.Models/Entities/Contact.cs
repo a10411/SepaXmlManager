@@ -19,7 +19,7 @@ namespace SepaXmlManager.Models.Entities
 
         [Required, MaxLength(34)]
         public string IBAN { get; set; } = string.Empty;
-
+        public string? NIF { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;
 
         [MaxLength(11)]
