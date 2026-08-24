@@ -24,4 +24,13 @@
     <ProjectReference Include="..\SepaXmlManager.Models\SepaXmlManager.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Schemas\pain.001.001.09.xsd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Schemas\pain.008.001.08.xsd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

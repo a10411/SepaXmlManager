@@ -21,6 +21,7 @@ namespace ProjetoFinal.Models.Pain008
     public partial class AccountIdentification4Choice
     {
         
+
         /// <summary>
         /// <para xml:lang="en">Pattern: [A-Z]{2,2}[0-9]{2,2}[a-zA-Z0-9]{1,30}.</para>
         /// </summary>

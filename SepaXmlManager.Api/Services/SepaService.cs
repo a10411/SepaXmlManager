@@ -62,6 +62,11 @@ namespace SepaXmlManager.Api.Services
             {
                 PmtInfId = $"PMT-{batch.MsgId}",
                 PmtMtd = PaymentMethod3Code.Trf,
+                ReqdExctnDt = new ProjetoFinal.Models.Pain001.DateAndDateTime2Choice
+                {
+                    Dt = DateTime.Now.Date,
+                    DtSpecified = true // O segredo está aqui! Isto força o C# a escrever a tag no XML.
+                },
 
                 //Empresa Credora
                 Dbtr = new PartyIdentification135 { Nm = batch.Company.Name },
@@ -77,7 +82,7 @@ namespace SepaXmlManager.Api.Services
                 {
                     FinInstnId = new FinancialInstitutionIdentification18
                     {
-                        Bicfi = batch.Company.BIC
+                        Bicfi = batch.Company.BIC.ToUpper()
                     }
                 }
             };
@@ -108,7 +113,7 @@ namespace SepaXmlManager.Api.Services
                     {
                         FinInstnId = new FinancialInstitutionIdentification18
                         {
-                            Bicfi = tx.Contact.BIC
+                            Bicfi = tx.Contact.BIC.ToUpper()
                         }
                     },
                     Cdtr = new PartyIdentification135
@@ -125,7 +130,7 @@ namespace SepaXmlManager.Api.Services
          
                 };
                 //Adicionar a transacao à lista
-                txInfo.RmtInf = new RemittanceInformation16();
+                txInfo.RmtInf = new ProjetoFinal.Models.Pain001.RemittanceInformation16();
                 txInfo.RmtInf.Ustrd.Add(tx.Description);
                 pmtInf.CdtTrfTxInf.Add(txInfo);
             }
@@ -158,10 +163,145 @@ namespace SepaXmlManager.Api.Services
             return memoryStream.ToArray();
         }
         public async Task<byte[]> GeneratePain008XmlAsync(int batchId)
-        {
-            // Estrutura semelhante ao pain.001, adaptada para Débitos Diretos
-            // (inclui MandateReference e DateSignatureMandate)
-            throw new NotImplementedException("Será implementado no próximo passo.");
+        {   
+            //Procurar lote na base de dados
+            var batch = await _context.TransferBatches
+                .Include(b => b.Company)
+                .Include(b => b.Transaction)
+                    .ThenInclude(t => t.Contact)
+                .FirstOrDefaultAsync(b => b.Id == batchId);
+
+            if (batch == null)
+            {
+                throw new KeyNotFoundException($"Transfer Batch with ID {batchId} not found!");
+            }
+
+            //Mapping para XML
+            var doc = new ProjetoFinal.Models.Pain008.Document();
+
+            doc.CstmrDrctDbtInitn = new ProjetoFinal.Models.Pain008.CustomerDirectDebitInitiationV08();
+
+            //Preencher o Cabeçalho (Group Header)
+            doc.CstmrDrctDbtInitn.GrpHdr = new ProjetoFinal.Models.Pain008.GroupHeader83
+            {
+                MsgId = batch.MsgId,
+                CreDtTm = batch.DateCreation,
+                NbOfTxs = batch.TotalTransactions.ToString(),
+                CtrlSum = batch.TotalAmount,
+                CtrlSumSpecified = true,
+                InitgPty = new ProjetoFinal.Models.Pain008.PartyIdentification135
+                {
+                    Nm = batch.Company.Name
+                }
+            };
+
+
+            //Informações do Pagamento (A Empresa agora é quem RECEBE - Credora)
+            var pmtInf = new ProjetoFinal.Models.Pain008.PaymentInstruction29
+            {
+                PmtInfId = $"PMT-{batch.MsgId}",
+                PmtMtd = ProjetoFinal.Models.Pain008.PaymentMethod2Code.Dd, // DD = Direct Debit
+                ReqdColltnDt = DateTime.Now.Date.AddDays(3),
+                NbOfTxs = batch.TotalTransactions.ToString(),
+                CtrlSum = batch.TotalAmount,
+                CtrlSumSpecified = true,
+
+                // Empresa Credora (A tua Empresa)
+                Cdtr = new ProjetoFinal.Models.Pain008.PartyIdentification135 { Nm = batch.Company.Name },
+                CdtrAcct = new ProjetoFinal.Models.Pain008.CashAccount38
+                {
+                    Id = new ProjetoFinal.Models.Pain008.AccountIdentification4Choice
+                    {
+                        Othr = new ProjetoFinal.Models.Pain008.GenericAccountIdentification1 { Id = batch.Company.IBAN }
+                    }
+                },
+                CdtrAgt = new ProjetoFinal.Models.Pain008.BranchAndFinancialInstitutionIdentification6
+                {
+                    FinInstnId = new ProjetoFinal.Models.Pain008.FinancialInstitutionIdentification18 { Bicfi = batch.Company.BIC.ToUpper() }
+                }
+            };
+
+            // Adicionar Transactions individuais
+
+            // Lista temporária em C# para contornar o problema dos Arrays do XSD
+
+            var txList = new List<ProjetoFinal.Models.Pain008.DirectDebitTransactionInformation23>();
+
+            foreach (var tx in batch.Transaction)
+            {
+                var txInfo = new ProjetoFinal.Models.Pain008.DirectDebitTransactionInformation23
+                {
+                    PmtId = new ProjetoFinal.Models.Pain008.PaymentIdentification6
+                    {
+                        EndToEndId = tx.EndToEndId,
+                    },
+                    InstdAmt = new ProjetoFinal.Models.Pain008.ActiveOrHistoricCurrencyAndAmount
+                    {
+                        Ccy = "EUR",
+                        Value = tx.Amount
+                    },
+
+                    // Informação do Mandato (Obrigatório para Cobranças)
+                    DrctDbtTx = new ProjetoFinal.Models.Pain008.DirectDebitTransaction10
+                    {
+                        MndtRltdInf = new ProjetoFinal.Models.Pain008.MandateRelatedInformation14
+                        {
+                            MndtId = tx.Contact.MandateReference ?? "MND-DESCONHECIDO",
+                            DtOfSgntr = tx.Contact.DateSignatureMandate ?? DateTime.Now,
+                            DtOfSgntrSpecified = true
+                        }
+                    },
+
+                    // Contacto Devedor (Quem vai ser cobrado)
+                    DbtrAgt = new ProjetoFinal.Models.Pain008.BranchAndFinancialInstitutionIdentification6
+                    {
+                        FinInstnId = new ProjetoFinal.Models.Pain008.FinancialInstitutionIdentification18
+                        {
+                            Bicfi = tx.Contact.BIC.ToUpper()
+                        }
+                    },
+                    Dbtr = new ProjetoFinal.Models.Pain008.PartyIdentification135
+                    {
+                        Nm = tx.Contact.Name
+                    },
+                    DbtrAcct = new ProjetoFinal.Models.Pain008.CashAccount38
+                    {
+                        Id = new ProjetoFinal.Models.Pain008.AccountIdentification4Choice
+                        {
+                            Othr = new ProjetoFinal.Models.Pain008.GenericAccountIdentification1 { Id = tx.Contact.IBAN }
+                        }
+                    }
+                };
+
+                // Adicionar a transação à lista usando o truque do Array na Descrição
+                txInfo.RmtInf = new ProjetoFinal.Models.Pain008.RemittanceInformation16();
+                txInfo.RmtInf.Ustrd.Add(tx.Description);
+                pmtInf.DrctDbtTxInf.Add(txInfo);
+            }
+    
+ 
+            doc.CstmrDrctDbtInitn.PmtInf.Add(pmtInf);
+
+            var serializer = new XmlSerializer(typeof(ProjetoFinal.Models.Pain008.Document));
+
+            var xmlSettings = new XmlWriterSettings
+            {
+                Encoding = new UTF8Encoding(false),
+                Indent = true,
+            };
+
+            // Usamos a Memória RAM (MemoryStream) em vez do disco rígido para criar o ficheiro de forma mais rápida e segura
+            using var memoryStream = new MemoryStream();
+            using (var xmlWriter = XmlWriter.Create(memoryStream, xmlSettings))
+            {
+                // A magia acontece aqui: o serializer lê o "doc" e escreve o texto XML para dentro da memória
+                serializer.Serialize(xmlWriter, doc);
+            }
+
+            // Pegamos no ficheiro XML gerado na memória e convertemos para um array de Bytes.
+            // É isto que será enviado pela Internet para o utilizador fazer o download!
+            return memoryStream.ToArray();
+
         }
 
 

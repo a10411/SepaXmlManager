@@ -27,8 +27,7 @@ namespace SepaXmlManager.Api.Data
             };
             context.Companies.Add(company);
             context.SaveChanges(); // Guarda para gerar o ID da Empresa
-
-            // 2. Criar Contactos (Beneficiários) de Teste
+           
             var contact1 = new Contact
             {
                 CompanyId = company.Id,
@@ -36,7 +35,11 @@ namespace SepaXmlManager.Api.Data
                 NIF = "212345678",
                 IBAN = "PT50003300000009876543211",
                 BIC = "BCOMPTPLxxx",
-                IsActive = true
+                IsActive = true,
+
+                // --- CAMPOS NOVOS OBRIGATÓRIOS PARA O PAIN.008 ---
+                MandateReference = "MND-JOAO-2026",
+                DateSignatureMandate = new DateTime(2025, 01, 15)
             };
 
             var contact2 = new Contact
@@ -46,7 +49,11 @@ namespace SepaXmlManager.Api.Data
                 NIF = "223456789",
                 IBAN = "PT50001800000005554443322",
                 BIC = "CGDPTPLXxxx",
-                IsActive = true
+                IsActive = true,
+
+                // --- CAMPOS NOVOS OBRIGATÓRIOS PARA O PAIN.008 ---
+                MandateReference = "MND-MARIA-2026",
+                DateSignatureMandate = new DateTime(2026, 05, 20)
             };
 
             context.Contacts.AddRange(contact1, contact2);
