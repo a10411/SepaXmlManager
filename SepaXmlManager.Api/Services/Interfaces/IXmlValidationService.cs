@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using SepaXmlManager.Models;
 
-namespace SepaXmlManager.Api.Services
+namespace SepaXmlManager.Api.Services.Interfaces
 {
     public interface IXmlValidationService
     {

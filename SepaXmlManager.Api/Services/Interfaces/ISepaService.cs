@@ -1,4 +1,4 @@
-﻿namespace SepaXmlManager.Api.Services
+﻿namespace SepaXmlManager.Api.Services.Interfaces
 {
     public interface ISepaService
     {   

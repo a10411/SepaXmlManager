@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjetoFinal.Models.Pain001;
 using SepaXmlManager.Api.Data;
+using SepaXmlManager.Api.Services.Interfaces;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Xml;

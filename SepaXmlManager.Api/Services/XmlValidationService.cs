@@ -2,6 +2,7 @@
 using System.IO;
 using System.Xml;
 using System.Xml.Schema;
+using SepaXmlManager.Api.Services.Interfaces;
 using SepaXmlManager.Models;
 
 namespace SepaXmlManager.Api.Services

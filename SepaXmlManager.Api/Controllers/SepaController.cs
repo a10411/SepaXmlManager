@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SepaXmlManager.Api.Services;
+using SepaXmlManager.Api.Services.Interfaces;
 
 namespace SepaXmlManager.Api.Controllers
 {

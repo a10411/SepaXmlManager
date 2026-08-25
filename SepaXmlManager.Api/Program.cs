@@ -1,12 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using SepaXmlManager.Api.Data;
 using SepaXmlManager.Api.Services;
+using SepaXmlManager.Api.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// ====================================================================
-// FASE 1: O CONSTRUTOR (Adicionar Serviços)
-// ====================================================================
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -19,12 +16,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Serviços
 builder.Services.AddScoped<ISepaService, SepaService>();
 builder.Services.AddScoped<IXmlValidationService, XmlValidationService>();
-
-
+builder.Services.AddScoped<ICompanyService, CompanyService>();
 
 var app = builder.Build();
-
-
 
 if (app.Environment.IsDevelopment())
 {
@@ -36,7 +30,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 
-
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -47,6 +40,5 @@ using (var scope = app.Services.CreateScope())
 
     DbInitializer.Seed(context);
 }
-
 
 app.Run();
