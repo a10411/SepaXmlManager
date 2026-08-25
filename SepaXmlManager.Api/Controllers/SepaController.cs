@@ -22,11 +22,7 @@ namespace SepaXmlManager.Api.Controllers
             _validationService = validationService; // Inicializa a variável
         }
 
-
-
         //GET 
-
-
 
         /// <summary>
         /// Endpoint para gerar o ficheiro XML (pain.001) e devolvê-lo para download.
@@ -89,10 +85,8 @@ namespace SepaXmlManager.Api.Controllers
             }
         }
 
-
-
-
         //POST 
+
         /// <summary>
         /// Endpoint para validar um ficheiro XML contra as regras oficiais SEPA (XSD).
         /// </summary>

@@ -29,7 +29,7 @@ namespace SepaXmlManager.Api.Services
 
         public async Task<Company> SaveCompanyAsync(Company company)
         {
-            // 1. O nosso "Segurança" atua aqui antes de tocarmos na Base de Dados!
+            //Verificar se os dados da empresa são válidos
             if (!_validationService.IsIbanValid(company.IBAN))
             {
                 throw new ArgumentException("IBAN not valid.\nVerify data!");

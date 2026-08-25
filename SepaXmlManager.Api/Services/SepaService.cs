@@ -14,10 +14,11 @@ namespace SepaXmlManager.Api.Services
     public class SepaService : ISepaService
     {
         private readonly AppDbContext _context;
-
-        public SepaService(AppDbContext context)
+        private readonly ICompanyService _companyService;
+        public SepaService(AppDbContext context, ICompanyService companyService)
         {
             _context = context;
+            _companyService = companyService;
         }
 
 
@@ -36,6 +37,12 @@ namespace SepaXmlManager.Api.Services
                 throw new KeyNotFoundException($"Transfer Batch with ID {batchID} not found!");
             }
 
+
+            var myCompany = await _companyService.GetCompanyAsync();
+            if (myCompany == null)
+            {
+                throw new InvalidOperationException("Erro: Cannot generate SEPA file. Configure your Company data first.");
+            }
             //mapping para XML
 
             var doc = new ProjetoFinal.Models.Pain001.Document();
@@ -54,7 +61,7 @@ namespace SepaXmlManager.Api.Services
                 CtrlSumSpecified = true,
                 InitgPty = new PartyIdentification135
                 {
-                    Nm = batch.Company.Name
+                    Nm = myCompany.Name
                 }
             };
 
@@ -70,12 +77,12 @@ namespace SepaXmlManager.Api.Services
                 },
 
                 //Empresa Credora
-                Dbtr = new PartyIdentification135 { Nm = batch.Company.Name },
+                Dbtr = new PartyIdentification135 { Nm = myCompany.Name },
                 DbtrAcct = new CashAccount38 //Conta da empresa Credora
                 {
                     Id = new AccountIdentification4Choice
                     {
-                        Othr = new GenericAccountIdentification1 { Id = batch.Company.IBAN },
+                        Othr = new GenericAccountIdentification1 { Id = myCompany.IBAN },
                     }
                 },
                 // Banco da Empresa (Company)
@@ -83,7 +90,7 @@ namespace SepaXmlManager.Api.Services
                 {
                     FinInstnId = new FinancialInstitutionIdentification18
                     {
-                        Bicfi = batch.Company.BIC.ToUpper()
+                        Bicfi = myCompany.BIC.ToUpper()
                     }
                 }
             };
@@ -177,6 +184,12 @@ namespace SepaXmlManager.Api.Services
                 throw new KeyNotFoundException($"Transfer Batch with ID {batchId} not found!");
             }
 
+            var myCompany = await _companyService.GetCompanyAsync();
+            if (myCompany == null)
+            {
+                throw new InvalidOperationException("Erro: Cannot generate SEPA file. Configure your Company data first.");
+            }
+
             //Mapping para XML
             var doc = new ProjetoFinal.Models.Pain008.Document();
 
@@ -192,7 +205,7 @@ namespace SepaXmlManager.Api.Services
                 CtrlSumSpecified = true,
                 InitgPty = new ProjetoFinal.Models.Pain008.PartyIdentification135
                 {
-                    Nm = batch.Company.Name
+                    Nm = myCompany.Name
                 }
             };
 
@@ -208,17 +221,17 @@ namespace SepaXmlManager.Api.Services
                 CtrlSumSpecified = true,
 
                 // Empresa Credora (A tua Empresa)
-                Cdtr = new ProjetoFinal.Models.Pain008.PartyIdentification135 { Nm = batch.Company.Name },
+                Cdtr = new ProjetoFinal.Models.Pain008.PartyIdentification135 { Nm = myCompany.Name },
                 CdtrAcct = new ProjetoFinal.Models.Pain008.CashAccount38
                 {
                     Id = new ProjetoFinal.Models.Pain008.AccountIdentification4Choice
                     {
-                        Othr = new ProjetoFinal.Models.Pain008.GenericAccountIdentification1 { Id = batch.Company.IBAN }
+                        Othr = new ProjetoFinal.Models.Pain008.GenericAccountIdentification1 { Id = myCompany.IBAN }
                     }
                 },
                 CdtrAgt = new ProjetoFinal.Models.Pain008.BranchAndFinancialInstitutionIdentification6
                 {
-                    FinInstnId = new ProjetoFinal.Models.Pain008.FinancialInstitutionIdentification18 { Bicfi = batch.Company.BIC.ToUpper() }
+                    FinInstnId = new ProjetoFinal.Models.Pain008.FinancialInstitutionIdentification18 { Bicfi = myCompany.BIC.ToUpper() }
                 }
             };
 

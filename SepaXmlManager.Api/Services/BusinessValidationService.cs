@@ -1,8 +1,9 @@
-﻿using System.Numerics;
+﻿using SepaXmlManager.Api.Services.Interfaces;
+using System.Numerics;
 
 namespace SepaXmlManager.Api.Services
 {
-    public class BusinessValidationService
+    public class BusinessValidationService:IBusinessValidationService
     {
         public bool IsIbanValid(string iban)
         {
