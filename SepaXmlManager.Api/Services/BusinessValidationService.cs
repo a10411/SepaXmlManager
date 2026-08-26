@@ -1,5 +1,6 @@
 ﻿using SepaXmlManager.Api.Services.Interfaces;
 using System.Numerics;
+using VatValidation;
 
 namespace SepaXmlManager.Api.Services
 {
@@ -39,6 +40,26 @@ namespace SepaXmlManager.Api.Services
             }
 
             return false;
+        }
+
+        public bool IsValidTaxId(string countryCode, string taxId)
+        {
+            if (string.IsNullOrWhiteSpace(countryCode) || string.IsNullOrWhiteSpace(taxId))
+            {
+                return false;
+            }
+
+            try
+            {
+                countryCode = countryCode.Trim().ToUpper();
+                taxId = taxId.Trim();
+
+                return VatNumber.TryParse($"{countryCode}{taxId}", out _);
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

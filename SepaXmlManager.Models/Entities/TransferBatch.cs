@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace SepaXmlManager.Models.Entities
@@ -28,10 +29,12 @@ namespace SepaXmlManager.Models.Entities
 
         public string FilePath { get; set; } = string.Empty;
 
-        
+
 
         // Relacionamentos
-        public Company Company { get; set; } = null!;
+        [JsonIgnore]
+        public Company? Company { get; set; } = null!;
+        [JsonIgnore]
         public List<Transaction> Transaction { get; set; } = new List<Transaction>();
     }
 }

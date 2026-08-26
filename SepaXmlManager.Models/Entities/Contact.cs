@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace SepaXmlManager.Models.Entities
@@ -24,6 +25,7 @@ namespace SepaXmlManager.Models.Entities
 
         [MaxLength(11)]
         public string BIC { get; set; } = string.Empty;
+        public string CountryCode { get; set; } = "PT";
 
         [MaxLength(35)]
         public string? MandateReference { get; set; } = string.Empty;// Para pain.008
@@ -31,7 +33,8 @@ namespace SepaXmlManager.Models.Entities
         public DateTime? DateSignatureMandate { get; set; } // Para pain.008
 
         // Relacionamentos
-        public Company Company { get; set; } = null!;
+        [JsonIgnore]
+        public Company? Company { get; set; } = null!;
         public List<Transaction> Transaction { get; set; } = new List<Transaction>();
     }
 }

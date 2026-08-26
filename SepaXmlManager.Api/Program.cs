@@ -19,6 +19,7 @@ builder.Services.AddScoped<IXmlValidationService, XmlValidationService>();
 builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<IBusinessValidationService, BusinessValidationService>();
 builder.Services.AddScoped<IContactService, ContactService>();
+builder.Services.AddScoped<IBatchService, BatchService>();
 
 var app = builder.Build();
 

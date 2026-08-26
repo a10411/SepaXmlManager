@@ -15,13 +15,21 @@ namespace SepaXmlManager.Api.Services
     {
         private readonly AppDbContext _context;
         private readonly ICompanyService _companyService;
-        public SepaService(AppDbContext context, ICompanyService companyService)
+        private readonly IXmlValidationService _xmlValidator;
+        public SepaService(AppDbContext context, ICompanyService companyService, IXmlValidationService xmlValidator)
         {
             _context = context;
             _companyService = companyService;
+            _xmlValidator = xmlValidator;
         }
 
-
+        /// <summary>
+        /// Task que gera o ficheiro XML SEPA no formato pain.001 a partir de um lote de transferências identificado pelo batchID.
+        /// </summary>
+        /// <param name="batchID"></param>
+        /// <returns></returns>
+        /// <exception cref="KeyNotFoundException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
         public async Task<byte[]> GeneratePain001XmlAsync(int batchID)
         {   
             //procura o lote
@@ -166,10 +174,28 @@ namespace SepaXmlManager.Api.Services
                 serializer.Serialize(xmlWriter, doc);
             }
 
+
+            //Validar o XML gerado contra o XSD do banco (pain.001)
+            memoryStream.Position = 0;
+            var validationResult = _xmlValidator.ValidateXml(memoryStream, "PAIN001");
+            if (!validationResult.IsValid)
+            {
+                string errorMessage = string.Join(" \n", validationResult.Errors);
+                throw new InvalidOperationException($"O ficheiro XML gerado é inválido segundo as regras do banco (XSD):\n{errorMessage}");
+            }
+
             // Pegamos no ficheiro XML gerado na memória e convertemos para um array de Bytes.
             // É isto que será enviado pela Internet para o utilizador fazer o download!
             return memoryStream.ToArray();
         }
+
+        /// <summary>
+        /// Task que gera o ficheiro XML SEPA no formato pain.008 a partir de um lote de transferências identificado pelo batchId.
+        /// </summary>
+        /// <param name="batchId"></param>
+        /// <returns></returns>
+        /// <exception cref="KeyNotFoundException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
         public async Task<byte[]> GeneratePain008XmlAsync(int batchId)
         {   
             //Procurar lote na base de dados
@@ -287,7 +313,7 @@ namespace SepaXmlManager.Api.Services
                     }
                 };
 
-                // Adicionar a transação à lista usando o truque do Array na Descrição
+                // Adicionar a transação à lista 
                 txInfo.RmtInf = new ProjetoFinal.Models.Pain008.RemittanceInformation16();
                 txInfo.RmtInf.Ustrd.Add(tx.Description);
                 pmtInf.DrctDbtTxInf.Add(txInfo);
@@ -312,8 +338,15 @@ namespace SepaXmlManager.Api.Services
                 serializer.Serialize(xmlWriter, doc);
             }
 
+            memoryStream.Position = 0;
+            var validationResult = _xmlValidator.ValidateXml(memoryStream, "PAIN008");
+            if (!validationResult.IsValid)
+            {
+                string errorMessage = string.Join(" \n", validationResult.Errors);
+                throw new InvalidOperationException($"O ficheiro XML gerado é inválido segundo as regras do banco (XSD):\n{errorMessage}");
+            }
             // Pegamos no ficheiro XML gerado na memória e convertemos para um array de Bytes.
-            // É isto que será enviado pela Internet para o utilizador fazer o download!
+
             return memoryStream.ToArray();
 
         }

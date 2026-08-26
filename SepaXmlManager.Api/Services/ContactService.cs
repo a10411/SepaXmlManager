@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SepaXmlManager.Api.Data;
 using SepaXmlManager.Api.Services.Interfaces;
-using SepaXmlManager.Models.Entities; // Ajusta se a tua classe Contact estiver noutro namespace (ex: ProjetoFinal.Models)
+using SepaXmlManager.Models.Entities; 
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -35,11 +35,25 @@ namespace SepaXmlManager.Api.Services
         {
             if (!_validationService.IsIbanValid(contact.IBAN))
             {
-                throw new ArgumentException("IBAN not valid! Verify data.");
+                throw new ArgumentException("O IBAN do contacto é inválido. Verifique os dados!");
             }
 
+            // 2. A MAGIA: Ligar o cliente automaticamente à única Empresa do sistema
+            var myCompany = await _context.Companies.FirstOrDefaultAsync();
+            if (myCompany == null)
+            {
+                throw new InvalidOperationException("Erro: Tem de configurar a sua Empresa no sistema antes de criar clientes.");
+            }
+
+            // Atribuímos o ID da empresa verdadeira ao contacto antes de o gravar!
+            contact.CompanyId = myCompany.Id;
+            if (!_validationService.IsValidTaxId("PT", contact.NIF)) // Podes assumir "PT" por defeito se não tiveres o campo Country
+            {
+                throw new ArgumentException("O NIF introduzido é inválido ou não obedece às regras matemáticas europeias.");
+            }
+            // 3. Guarda na base de dados em segurança
             _context.Contacts.Add(contact);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); // Era aqui que o erro 500 rebentava!
 
             return contact;
         }

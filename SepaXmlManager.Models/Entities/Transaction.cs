@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace SepaXmlManager.Models.Entities
@@ -23,8 +24,10 @@ namespace SepaXmlManager.Models.Entities
 
         [MaxLength(140)]
         public string Description { get; set; } = string.Empty;
-
-        public TransferBatch TransferBatch { get; set; } = null!;
-        public Contact Contact { get; set; } = null!;
+       
+        [JsonIgnore]
+        public TransferBatch? TransferBatch { get; set; } = null!;
+        [JsonIgnore]
+        public Contact? Contact { get; set; } = null!;
     }
 }

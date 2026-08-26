@@ -17,7 +17,10 @@ namespace SepaXmlManager.Api.Controllers
             _contactService = contactService;
         }
 
-
+        /// <summary>
+        /// Endpoint para obter todos os contactos.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetAllContacts()
         {
@@ -25,7 +28,11 @@ namespace SepaXmlManager.Api.Controllers
             return Ok(contacts);
         }
 
-        // GET: api/Contact/5 (Procura apenas o contacto com o ID número 5)
+        /// <summary>
+        /// Endpoint para obter um contacto específico pelo seu ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetContactById(int id)
         {
@@ -39,7 +46,11 @@ namespace SepaXmlManager.Api.Controllers
             return Ok(contact);
         }
 
-        // POST: api/Contact (Cria um contacto novo)
+        /// <summary>
+        /// Endpoint para criar um novo contacto. Se o IBAN for inválido, retorna um erro 400 Bad Request.
+        /// </summary>
+        /// <param name="contact"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> CreateContact([FromBody] Contact contact)
         {
@@ -65,7 +76,12 @@ namespace SepaXmlManager.Api.Controllers
             }
         }
 
-        // PUT: api/Contact/5 (Atualiza os dados do contacto com o ID número 5)
+        /// <summary>
+        /// Endpoint para atualizar um contacto existente. Se o IBAN for inválido, retorna um erro 400 Bad Request.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="contact"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateContact(int id, [FromBody] Contact contact)
         {
@@ -96,7 +112,11 @@ namespace SepaXmlManager.Api.Controllers
             }
         }
 
-        // DELETE: api/Contact/5 (Apaga o contacto com o ID número 5)
+        /// <summary>
+        /// Endpoint para apagar um contacto pelo seu ID. Se o contacto não existir, retorna um erro 404 Not Found.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteContact(int id)
         {
