@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace SepaXmlManager.Models.Entities
@@ -29,7 +30,9 @@ namespace SepaXmlManager.Models.Entities
         public string IdentityCreditor { get; set; } = string.Empty; // Opcional, mas obrigatório para pain.008
 
         // Relacionamentos (1 Empresa tem Muitos Lotes e Contactos)
+        [JsonIgnore]
         public List<Contact> Contacts { get; set; } = new List<Contact>();
+        [JsonIgnore]
         public List<TransferBatch> Batches { get; set; } = new List<TransferBatch>();
     }
 }

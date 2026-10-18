@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using SepaXmlManager.Api.Services;
 using SepaXmlManager.Api.Services.Interfaces;
 
 namespace SepaXmlManager.Api.Controllers
@@ -13,13 +15,15 @@ namespace SepaXmlManager.Api.Controllers
         // Variável para guardar o serviço
         private readonly ISepaService _sepaService;
         private readonly IXmlValidationService _validationService;
+        private readonly IUploadService _uploadService;
 
         // contrutor para injetar o serviço no controller
 
-        public SepaController(ISepaService sepaService, IXmlValidationService validationService)
+        public SepaController(ISepaService sepaService, IXmlValidationService validationService, IUploadService uploadService)
         {
             _sepaService = sepaService;
             _validationService = validationService; // Inicializa a variável
+            _uploadService = uploadService;
         }
 
         //GET 
@@ -115,7 +119,39 @@ namespace SepaXmlManager.Api.Controllers
         }
 
 
+        /// <summary>
+        /// Endpoint para enviar um ficheiro Excel/CSV com dezenas de transações.
+        /// Cria automaticamente clientes novos e um Lote pronto a processar.
+        /// </summary>
+        /// <param name="file">O ficheiro em formato .csv</param>
+        /// <param name="operationType">"PAGAMENTO" ou "COBRANCA"</param>
+        /// <returns></returns>
+        [HttpPost("upload-batch")]
+        public async Task<IActionResult> UploadCsvBatch(IFormFile file, [FromQuery] string operationType = "PAGAMENTO")
+        {
+            try
+            {
+                // Manda o Serviço processar o ficheiro
+                int batchId = await _uploadService.ProcessCsvFileAsync(file, operationType);
 
+                // Se tudo correr bem, devolve o ID do Lote criado
+                return Ok(new { message = "Ficheiro processado com sucesso!", batchId = batchId });
+            }
+            catch (ArgumentException ex)
+            {
+                // Apanha erros no CSV (ex: formato, IBAN falso, campos vazios)
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Apanha erro da falta de Empresa configurada
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = $"Erro interno do servidor: {ex.Message}" });
+            }
+        }
 
 
 

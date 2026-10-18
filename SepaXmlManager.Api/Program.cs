@@ -20,6 +20,7 @@ builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<IBusinessValidationService, BusinessValidationService>();
 builder.Services.AddScoped<IContactService, ContactService>();
 builder.Services.AddScoped<IBatchService, BatchService>();
+builder.Services.AddScoped<IUploadService, UploadService>();
 
 var app = builder.Build();
 
