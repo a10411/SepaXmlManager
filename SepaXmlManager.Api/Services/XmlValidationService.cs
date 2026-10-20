@@ -9,12 +9,18 @@ namespace SepaXmlManager.Api.Services
 {
     public class XmlValidationService : IXmlValidationService
     {
+        /// <summary>
+        /// Efetua a validação estrutural de um fluxo de dados XML contra os esquemas XSD oficiais (SEPA pain.001 ou pain.008).
+        /// </summary>
+        /// <param name="xmlStream">O fluxo de dados (Stream) contendo o conteúdo do ficheiro XML a analisar.</param>
+        /// <param name="documentType">A designação do standard esperado (ex: "PAIN001" ou "PAIN008").</param>
+        /// <returns>Retorna um objeto XmlValidationResult indicando o sucesso da operação ou detalhando as anomalias detetadas em formato legível.</returns>
         public XmlValidationResult ValidateXml(Stream xmlStream, string documentType)
         {
             var result = new XmlValidationResult { IsValid = true };
             string schemaFileName = string.Empty;
 
-            // 1. Identificar qual é o ficheiro XSD a usar (Transferências ou Cobranças)
+            // Identifica o ficheiro XSD aplicável com base no tipo de documento (Transferências ou Cobranças).
             switch (documentType.ToUpper())
             {
                 case "PAIN001":
@@ -29,7 +35,7 @@ namespace SepaXmlManager.Api.Services
                     return result;
             }
 
-            // 2. Construir o caminho exato para Schemas
+            // Constrói o caminho físico absoluto para aceder ao ficheiro de validação (Schema).
             string schemaPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Schemas", schemaFileName);
 
             if (!File.Exists(schemaPath))
@@ -39,7 +45,7 @@ namespace SepaXmlManager.Api.Services
                 return result;
             }
 
-            // 3. Configurar XmlReaderSettings
+            // Configura as definições de leitura para incluir a validação por Schema.
             var settings = new XmlReaderSettings
             {
                 ValidationType = ValidationType.Schema
@@ -47,25 +53,25 @@ namespace SepaXmlManager.Api.Services
 
             settings.Schemas.Add(null, schemaPath);
 
-            // A MÁGICA ACONTECE AQUI: Quando o leitor encontra um erro, passa pelo tradutor!
+            // Regista o evento para intercetar falhas de validação durante a leitura do XML.
             settings.ValidationEventHandler += (sender, e) =>
             {
                 result.IsValid = false;
 
-                // Chamamos o nosso novo tradutor de erros humano antes de guardar
+                // Invoca o tradutor para converter a mensagem técnica numa mensagem percetível.
                 string humanMessage = TranslateXsdError(e.Message);
 
                 result.Errors.Add($"[Linha {e.Exception?.LineNumber}] {humanMessage}");
             };
 
-            // 4. Ler o ficheiro XML linha a linha
+            // Processa o ficheiro XML de forma iterativa.
             try
             {
                 using (var reader = XmlReader.Create(xmlStream, settings))
                 {
                     while (reader.Read())
                     {
-                        // O leitor varre o ficheiro todo. Se houver erro de regras, o EventHandler dispara.
+                        // A leitura percorre o ficheiro. O ValidationEventHandler é acionado de forma automática em caso de anomalia estrutural.
                     }
                 }
             }
@@ -78,13 +84,17 @@ namespace SepaXmlManager.Api.Services
             return result;
         }
 
-        // --- NOVO MÉTODO: O Dicionário Tradutor Humano ---
+        /// <summary>
+        /// Método auxiliar responsável por mapear os erros técnicos complexos do validador XSD para mensagens de utilizador descritivas.
+        /// </summary>
+        /// <param name="rawMessage">A mensagem de erro técnica original gerada pelo motor de validação XML.</param>
+        /// <returns>Retorna uma string traduzida contendo o erro em linguagem de negócio.</returns>
         private string TranslateXsdError(string rawMessage)
         {
             if (string.IsNullOrWhiteSpace(rawMessage))
                 return "Erro desconhecido de formatação ou validação.";
 
-            // 1. Traduzir erros do Mandato (MndtId)
+            // Traduz erros associados à referência do mandato (MndtId).
             if (rawMessage.Contains(":MndtId") && rawMessage.Contains("MinLength"))
             {
                 return "A Referência do Mandato (Mandate Reference) não pode estar vazia num ficheiro de Débitos Diretos.";
@@ -94,32 +104,31 @@ namespace SepaXmlManager.Api.Services
                 return "A Referência do Mandato excede o limite máximo permitido de 35 caracteres.";
             }
 
-            // 2. Traduzir erros do IBAN
+            // Traduz erros de formatação no IBAN.
             if (rawMessage.Contains(":IBAN") && (rawMessage.Contains("Pattern") || rawMessage.Contains("datatype")))
             {
                 return "Um dos IBANs presentes no ficheiro tem um formato inválido.";
             }
 
-            // 3. Traduzir erros de Valores/Montantes (InstdAmt ou CtrlSum)
+            // Traduz erros associados ao número de casas decimais dos montantes (InstdAmt ou CtrlSum).
             if ((rawMessage.Contains(":InstdAmt") || rawMessage.Contains(":CtrlSum")) && rawMessage.Contains("FractionDigits"))
             {
                 return "Um dos montantes tem demasiadas casas decimais. Os valores devem ter formato padrão (ex: 10.50).";
             }
 
-            // 4. Traduzir erros de Nomes vazios
+            // Traduz erros de preenchimento obrigatório para nomes.
             if (rawMessage.Contains(":Nm") && rawMessage.Contains("MinLength"))
             {
                 return "Existe um Nome de Cliente ou Empresa que se encontra vazio.";
             }
 
-            // 5. Traduzir erros do BIC
+            // Traduz erros de formatação do código BIC/SWIFT.
             if (rawMessage.Contains(":BICFI") && rawMessage.Contains("Pattern"))
             {
                 return "Um código BIC/SWIFT não cumpre as regras internacionais de formatação (deve ter 8 ou 11 caracteres).";
             }
 
-            // Fallback: Se não encontrarmos a tradução, devolvemos a mensagem técnica original
-            // para que nós (programadores) ainda possamos fazer debug se necessário.
+            // Retorna a mensagem técnica original caso não exista uma tradução mapeada, garantindo que o erro não é perdido para análise técnica.
             return $"Erro de formatação SEPA: {rawMessage}";
         }
     }

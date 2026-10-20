@@ -19,7 +19,10 @@ namespace SepaXmlManager.Api.Controllers
             _batchService = batchService;
         }
 
-        // GET
+        /// <summary>
+        /// Obtém a lista de todos os lotes de transferências ou cobranças registados no sistema.
+        /// </summary>
+        /// <returns>Retorna um objeto IActionResult contendo a lista de lotes e o código de estado HTTP 200 (OK).</returns>
         [HttpGet]
         public async Task<IActionResult> GetAllBatches()
         {
@@ -27,6 +30,11 @@ namespace SepaXmlManager.Api.Controllers
             return Ok(batches);
         }
 
+        /// <summary>
+        /// Obtém os detalhes de um lote específico através do seu identificador.
+        /// </summary>
+        /// <param name="id">O identificador numérico único do lote a recuperar.</param>
+        /// <returns>Retorna os dados do lote solicitado (HTTP 200) ou uma indicação de que não foi encontrado (HTTP 404).</returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBatchById(int id)
         {
@@ -38,7 +46,11 @@ namespace SepaXmlManager.Api.Controllers
             return Ok(batch);
         }
 
-        // POST
+        /// <summary>
+        /// Cria um novo lote de transferências ou cobranças no sistema.
+        /// </summary>
+        /// <param name="batch">O objeto contendo os dados base do lote a registar.</param>
+        /// <returns>Retorna o lote criado acompanhado do URI de acesso (HTTP 201), ou uma mensagem de erro caso a empresa principal não esteja configurada (HTTP 400).</returns>
         [HttpPost]
         public async Task<IActionResult> CreateBatch([FromBody] TransferBatch batch)
         {
@@ -54,7 +66,7 @@ namespace SepaXmlManager.Api.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                // Erro se a Empresa ainda não estiver criada
+                // Retorna erro caso a entidade Empresa principal não se encontre previamente configurada no sistema.
                 return BadRequest(ex.Message);
             }
             catch (Exception ex)
@@ -63,7 +75,12 @@ namespace SepaXmlManager.Api.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Associa uma nova transação financeira a um lote pré-existente.
+        /// </summary>
+        /// <param name="batchId">O identificador numérico do lote de destino.</param>
+        /// <param name="transaction">O objeto com os dados da transação a ser adicionada.</param>
+        /// <returns>Retorna a transação registada (HTTP 200), um aviso de lote não encontrado (HTTP 404), ou um erro de validação caso o contacto não exista (HTTP 400).</returns>
         [HttpPost("{batchId}/Transaction")]
         public async Task<IActionResult> AddTransactionToBatch(int batchId, [FromBody] Transaction transaction)
         {
@@ -79,11 +96,13 @@ namespace SepaXmlManager.Api.Controllers
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message); // O Lote não existe
+                // Sinaliza a ausência de recurso (Http 404) caso o identificador do lote referenciado não exista.
+                return NotFound(ex.Message);
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(ex.Message); // O Contacto não existe
+                // Assinala um erro de validação (Http 400) caso a transação tente associar um contacto inexistente.
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {

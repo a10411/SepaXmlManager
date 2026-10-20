@@ -7,7 +7,6 @@ namespace SepaXmlManager.Api.Services.Interfaces
     {
   
         Task<Company> GetCompanyAsync();
-
         Task<Company> SaveCompanyAsync(Company company);
         
     }
