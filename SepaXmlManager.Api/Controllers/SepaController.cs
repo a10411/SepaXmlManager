@@ -120,7 +120,7 @@ namespace SepaXmlManager.Api.Controllers
 
 
         /// <summary>
-        /// Endpoint para enviar um ficheiro Excel/CSV com dezenas de transações.
+        /// Endpoint para enviar um ficheiro Excel/CSV com transações.
         /// Cria automaticamente clientes novos e um Lote pronto a processar.
         /// </summary>
         /// <param name="file">O ficheiro em formato .csv</param>

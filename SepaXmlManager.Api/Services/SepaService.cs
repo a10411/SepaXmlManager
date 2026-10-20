@@ -239,7 +239,8 @@ namespace SepaXmlManager.Api.Services
                     {
                         MndtRltdInf = new ProjetoFinal.Models.Pain008.MandateRelatedInformation14
                         {
-                            MndtId = tx.Contact.MandateReference ?? "MND-DESCONHECIDO",
+                            // Adicionamos um fallback: se for Nulo ou Vazio, gera um "MND-DESCONHECIDO" em vez de deixar estalar
+                            MndtId = string.IsNullOrWhiteSpace(tx.Contact.MandateReference) ? $"MND-E2E-{tx.Id}" : tx.Contact.MandateReference,
                             DtOfSgntr = tx.Contact.DateSignatureMandate ?? DateTime.Now,
                             DtOfSgntrSpecified = true
                         }
