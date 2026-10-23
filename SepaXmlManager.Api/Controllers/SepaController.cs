@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SepaXmlManager.Api.Services;
 using SepaXmlManager.Api.Services.Interfaces;
@@ -10,6 +11,7 @@ namespace SepaXmlManager.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class SepaController : ControllerBase
     {
         private readonly ISepaService _sepaService;
@@ -30,6 +32,7 @@ namespace SepaXmlManager.Api.Controllers
         /// <param name="batchId">O identificador numérico único do lote de transferências.</param>
         /// <returns>Retorna o ficheiro XML gerado em formato binário (HTTP 200), ou as respetivas mensagens de erro caso o lote não exista (HTTP 404) ou ocorra uma anomalia (HTTP 400).</returns>
         [HttpGet("download-pain001/{batchId}")]
+        [Authorize(Roles = "Tesouraria")]
         public async Task<IActionResult> DownloadPain001(int batchId)
         {
             try
@@ -61,6 +64,7 @@ namespace SepaXmlManager.Api.Controllers
         /// <param name="batchId">O identificador numérico único do lote de cobranças.</param>
         /// <returns>Retorna o ficheiro XML gerado (HTTP 200) ou a correspondente mensagem de falha em caso de anomalia estrutural ou de negócio.</returns>
         [HttpGet("download-pain008/{batchId}")]
+        [Authorize(Roles = "Tesouraria")]
         public async Task<IActionResult> DownloadPain008(int batchId)
         {
             try
@@ -93,6 +97,7 @@ namespace SepaXmlManager.Api.Controllers
         /// <param name="xmlFile">O ficheiro em formato XML submetido para análise.</param>
         /// <returns>Retorna o sumário da validação técnica (HTTP 200) ou o detalhe de anomalias encontradas caso as regras XSD não sejam cumpridas (HTTP 400).</returns>
         [HttpPost("validate/{documentType}")]
+        [Authorize(Roles = "Tesouraria")]
         public IActionResult ValidateXmlFile(string documentType, IFormFile xmlFile)
         {
             if (xmlFile == null || xmlFile.Length == 0)
@@ -123,6 +128,7 @@ namespace SepaXmlManager.Api.Controllers
         /// <param name="operationType">Define o tipo de operação financeira a ser processada ("PAGAMENTO" ou "COBRANCA"). O valor padrão é "PAGAMENTO".</param>
         /// <returns>Retorna o identificador numérico único do lote criado (HTTP 200) ou a identificação das incorreções detetadas nos dados fornecidos (HTTP 400).</returns>
         [HttpPost("upload-batch")]
+        [Authorize(Roles = "Tesouraria")]
         public async Task<IActionResult> UploadCsvBatch(IFormFile file, [FromQuery] string operationType = "PAGAMENTO")
         {
             try

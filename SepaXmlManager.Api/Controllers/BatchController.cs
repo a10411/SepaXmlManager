@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SepaXmlManager.Api.Services;
 using SepaXmlManager.Api.Services.Interfaces;
 using SepaXmlManager.Models.Entities;
@@ -10,6 +11,7 @@ namespace SepaXmlManager.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class BatchController : ControllerBase
     {
         private readonly IBatchService _batchService;
@@ -24,6 +26,7 @@ namespace SepaXmlManager.Api.Controllers
         /// </summary>
         /// <returns>Retorna um objeto IActionResult contendo a lista de lotes e o código de estado HTTP 200 (OK).</returns>
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllBatches()
         {
             var batches = await _batchService.GetAllBatchesAsync();
@@ -36,6 +39,7 @@ namespace SepaXmlManager.Api.Controllers
         /// <param name="id">O identificador numérico único do lote a recuperar.</param>
         /// <returns>Retorna os dados do lote solicitado (HTTP 200) ou uma indicação de que não foi encontrado (HTTP 404).</returns>
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetBatchById(int id)
         {
             var batch = await _batchService.GetBatchByIdAsync(id);
@@ -52,6 +56,7 @@ namespace SepaXmlManager.Api.Controllers
         /// <param name="batch">O objeto contendo os dados base do lote a registar.</param>
         /// <returns>Retorna o lote criado acompanhado do URI de acesso (HTTP 201), ou uma mensagem de erro caso a empresa principal não esteja configurada (HTTP 400).</returns>
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateBatch([FromBody] TransferBatch batch)
         {
             if (batch == null)
@@ -82,6 +87,7 @@ namespace SepaXmlManager.Api.Controllers
         /// <param name="transaction">O objeto com os dados da transação a ser adicionada.</param>
         /// <returns>Retorna a transação registada (HTTP 200), um aviso de lote não encontrado (HTTP 404), ou um erro de validação caso o contacto não exista (HTTP 400).</returns>
         [HttpPost("{batchId}/Transaction")]
+        [Authorize]
         public async Task<IActionResult> AddTransactionToBatch(int batchId, [FromBody] Transaction transaction)
         {
             if (transaction == null)
