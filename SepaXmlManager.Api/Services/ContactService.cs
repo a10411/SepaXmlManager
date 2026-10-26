@@ -5,6 +5,7 @@ using SepaXmlManager.Models.Entities;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace SepaXmlManager.Api.Services
 {
@@ -26,7 +27,7 @@ namespace SepaXmlManager.Api.Services
         /// <returns>Retorna uma coleção contendo todas as entidades de contactos.</returns>
         public async Task<IEnumerable<Contact>> GetAllContactsAsync()
         {
-            return await _context.Contacts.ToListAsync();
+            return await _context.Contacts.Where(c => c.IsActive).ToListAsync();
         }
 
         /// <summary>
@@ -128,7 +129,7 @@ namespace SepaXmlManager.Api.Services
                 return false;
             }
 
-            _context.Contacts.Remove(contact);
+            contact.IsActive = false;
             await _context.SaveChangesAsync();
 
             return true;

@@ -1,13 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SepaXmlManager.Api.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace SepaXmlManager.Api.Controllers
-{
+{   /// <summary>
+    /// Controlador responsável pela extração e agregação de métricas financeiras e operacionais para o painel de controlo (Dashboard).
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class StatsController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -25,34 +29,37 @@ namespace SepaXmlManager.Api.Controllers
         public async Task<IActionResult> GetDashboardStats()
         {
             // Calcula o número total de contactos registados na base de dados.
-            var totalContacts = await _context.Contacts.CountAsync();
+            var totalContacts = await _context.Contacts.CountAsync(c => c.IsActive);
 
             // Calcula o volume total processado em operações de pagamento (saídas de capital).
             var totalPayments = await _context.Transactions
-                .Where(t => t.TransferBatch.TypeOperation == "PAGAMENTO")
-                .SumAsync(t => t.Amount);
+                            .Where(t => t.TransferBatch != null &&
+                                       (t.TransferBatch.TypeOperation == "PAIN.001" || t.TransferBatch.TypeOperation == "PAGAMENTO"))
+                            .SumAsync(t => t.Amount);
 
             // Calcula o volume total processado em operações de cobrança (entradas de capital).
             var totalCollections = await _context.Transactions
-                .Where(t => t.TransferBatch.TypeOperation == "COBRANCA")
-                .SumAsync(t => t.Amount);
+                            .Where(t => t.TransferBatch != null &&
+                                       (t.TransferBatch.TypeOperation == "PAIN.008" || t.TransferBatch.TypeOperation == "COBRANCA"))
+                            .SumAsync(t => t.Amount);
 
             // Contabiliza o número total de lotes de transferências gerados no sistema.
             var totalBatches = await _context.TransferBatches.CountAsync();
 
             // Agrupa as transações de cobrança por contacto, calcula o montante acumulado e seleciona os cinco clientes com maior volume de faturação.
             var topClients = await _context.Transactions
-                .Where(t => t.TransferBatch.TypeOperation == "COBRANCA")
-                .GroupBy(t => new { t.Contact.Name, t.Contact.NIF })
-                .Select(group => new
-                {
-                    ClientName = group.Key.Name,
-                    TaxId = group.Key.NIF,
-                    TotalCharged = group.Sum(t => t.Amount)
-                })
-                .OrderByDescending(x => x.TotalCharged)
-                .Take(5)
-                .ToListAsync();
+                            .Where(t => t.TransferBatch != null &&
+                                       (t.TransferBatch.TypeOperation == "PAIN.008" || t.TransferBatch.TypeOperation == "COBRANCA"))
+                            .GroupBy(t => new { t.Contact!.Name, t.Contact.NIF })
+                            .Select(group => new
+                            {
+                                ClientName = group.Key.Name,
+                                TaxId = group.Key.NIF,
+                                TotalCharged = group.Sum(t => t.Amount)
+                            })
+                            .OrderByDescending(x => x.TotalCharged)
+                            .Take(5)
+                            .ToListAsync();
 
             // Constrói o objeto de resposta estruturado agregando todas as métricas calculadas.
             var dashboardData = new
