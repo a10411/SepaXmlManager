@@ -66,6 +66,17 @@ builder.Services.AddScoped<IUploadService, UploadService>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+// Regista a política de CORS para autorizar pedidos provenientes de clientes externos.
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowBlazorOrigin", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 // 5. Configuração do Swagger para Suporte a Autorização JWT
 builder.Services.AddSwaggerGen(c =>
 {
@@ -106,7 +117,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseCors("AllowBlazorOrigin");
 // 6. Registo dos Middlewares de Segurança no Pipeline HTTP (A ordem é estritamente obrigatória)
 app.UseAuthentication(); // 1º: Identifica quem é o utilizador.
 app.UseAuthorization();  // 2º: Valida se o utilizador tem permissão para aceder ao recurso.

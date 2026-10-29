@@ -26,6 +26,7 @@ namespace SepaXmlManager.Models.Entities
         public int TotalTransactions { get; set; }
 
         public decimal TotalAmount { get; set; }
+        [JsonIgnore]
 
         public string FilePath { get; set; } = string.Empty;
 

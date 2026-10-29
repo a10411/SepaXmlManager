@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SepaXmlManager.tests", "Sep
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SepaXmlManager.Api", "SepaXmlManager.Api\SepaXmlManager.Api.csproj", "{27E577D8-39EC-06B2-0A55-D8A44B2AB2BF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SepaXmlManager.Web", "SepaXmlManager.Web\SepaXmlManager.Web.csproj", "{EE253035-F76F-4C0E-9F47-8BDAA78D3DB1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{27E577D8-39EC-06B2-0A55-D8A44B2AB2BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27E577D8-39EC-06B2-0A55-D8A44B2AB2BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27E577D8-39EC-06B2-0A55-D8A44B2AB2BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE253035-F76F-4C0E-9F47-8BDAA78D3DB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE253035-F76F-4C0E-9F47-8BDAA78D3DB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE253035-F76F-4C0E-9F47-8BDAA78D3DB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE253035-F76F-4C0E-9F47-8BDAA78D3DB1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
