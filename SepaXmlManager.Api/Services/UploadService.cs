@@ -47,6 +47,8 @@ namespace SepaXmlManager.Api.Services
             if (!file.FileName.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
                 throw new ArgumentException("Apenas ficheiros .csv são suportados nesta versão.");
 
+
+
             var company = await _companyService.GetCompanyAsync();
             if (company == null)
                 throw new InvalidOperationException("Configure a Empresa antes de importar ficheiros.");
@@ -89,6 +91,8 @@ namespace SepaXmlManager.Api.Services
             decimal totalBatchAmount = 0;
             int counter = 1;
 
+
+
             foreach (var record in records)
             {
                 // Normaliza os identificadores e formatos, removendo espaços e assegurando a capitalização correta.
@@ -96,8 +100,8 @@ namespace SepaXmlManager.Api.Services
                 string cleanNif = record.NIF.Replace(" ", "");
 
                 // Efetua a extração e conversão do valor financeiro, ignorando eventuais símbolos monetários.
-                if (!decimal.TryParse(record.Valor.Replace("€", "").Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out decimal parsedAmount))
-                    throw new ArgumentException($"Valor inválido '{record.Valor}' na linha {counter}.");
+                if (!decimal.TryParse(record.Valor.Replace("€", "").Trim(), NumberStyles.Any, CultureInfo.InvariantCulture, out decimal parsedAmount) || parsedAmount <= 0)
+                    throw new ArgumentException($"O valor {record.Valor} euros na linha {counter} do {record.Nome} é inválido.");
 
                 // Valida a conformidade matemática do IBAN perante as normas internacionais (Módulo 97).
                 if (!_validationService.IsIbanValid(cleanIban))
