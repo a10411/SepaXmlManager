@@ -110,9 +110,12 @@ namespace SepaXmlManager.Api.Services
                 // Verifica a preexistência do contacto na base de dados recorrendo ao IBAN como chave primária de pesquisa de negócio.
                 var existingContact = await _context.Contacts.FirstOrDefaultAsync(c => c.IBAN == cleanIban);
 
+                string mandateValue = !string.IsNullOrWhiteSpace(record.Mandato)
+                    ? record.Mandato.Trim()
+                    : (operationType.ToUpper() == "COBRANCA" ? $"MND-{DateTime.Now:yyyyMM}-{counter:D3}" : "");
+
                 if (existingContact == null)
                 {
-                    // Instancia e persiste um novo contacto caso não seja detetado um registo prévio no sistema.
                     existingContact = new Contact
                     {
                         CompanyId = company.Id,
@@ -121,11 +124,18 @@ namespace SepaXmlManager.Api.Services
                         NIF = cleanNif,
                         BIC = "XXXPTPL0",
                         IsActive = true,
-                        MandateReference = operationType.ToUpper() == "COBRANCA" ? $"MND-{DateTime.Now:yyyyMM}" : ""
+                        MandateReference = mandateValue,
+                        DateSignatureMandate = DateTime.Today
                     };
 
                     _context.Contacts.Add(existingContact);
                     await _context.SaveChangesAsync();
+                }
+                else if (operationType.ToUpper() == "COBRANCA" && string.IsNullOrWhiteSpace(existingContact.MandateReference))
+                {
+                    // Garante que contactos antigos sem mandato recebem um código válido ao processar uma cobrança PAIN.008.
+                    existingContact.MandateReference = mandateValue;
+                    existingContact.DateSignatureMandate ??= DateTime.Today;
                 }
 
                 // Cria a transação associando as respetivas entidades hierárquicas (Lote e Contacto).

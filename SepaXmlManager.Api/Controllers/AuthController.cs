@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -38,6 +39,7 @@ namespace SepaXmlManager.Api.Controllers
         /// </summary>
         /// <param name="model">Objeto DTO contendo os dados de registo (Username, Password e Role).</param>
         /// <returns>Retorna uma confirmação de sucesso (HTTP 200) ou os erros de validação (HTTP 400).</returns>
+        [Authorize]
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto model)
         {
