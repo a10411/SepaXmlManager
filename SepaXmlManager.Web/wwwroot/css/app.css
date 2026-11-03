@@ -58,6 +58,16 @@ a, .btn-link {
 
 }
 
+.card-texto-contorno {
+    -webkit-text-stroke: 0.6px #000;
+    text-stroke: 0.6px #000;
+}
+
+/* Adiciona uma linha preta exterior fina a envolver a barra lateral colorida */
+.card-com-borda-preta {
+    border: 1px solid rgba(0, 0, 0, 0.8) !important;
+}
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;
