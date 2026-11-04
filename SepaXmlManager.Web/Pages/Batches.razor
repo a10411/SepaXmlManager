@@ -60,18 +60,34 @@
 
     <!-- Tabela de Lotes Registados -->
     <div class="card shadow-sm border-0">
-        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 fw-bold">Histórico de Lotes Gerados</h5>
-            <button class="btn btn-outline-secondary btn-sm" @onclick="LoadBatchesAsync">
-                Atualizar Lista
-            </button>
+        <div class="card-header bg-white py-3">
+            <div class="row g-2 align-items-center justify-content-between">
+                <div class="col-md-4">
+                    <h5 class="mb-0 fw-bold">Histórico de Lotes Gerados</h5>
+                </div>
+                <div class="col-md-8 d-flex gap-2 justify-content-md-end">
+                    <input type="text" class="form-control form-control-sm w-50"
+                           placeholder="Pesquisar por ID, MsgId ou Data (dd/MM/yyyy)..."
+                           @bind="batchSearchTerm" @bind:event="oninput" />
+
+                    <select class="form-select form-select-sm w-auto" @bind="batchTypeFilter">
+                        <option value="TODOS">Todos os Tipos</option>
+                        <option value="PAIN.001">Pagamentos (PAIN.001)</option>
+                        <option value="PAIN.008">Cobranças (PAIN.008)</option>
+                    </select>
+
+                    <button class="btn btn-primary btn-sm" @onclick="LoadBatchesAsync">
+                        Atualizar Lista
+                    </button>
+                </div>
+            </div>
         </div>
         <div class="card-body p-0">
             @if (isLoading)
             {
                 <div class="p-4 text-center text-muted">A carregar lotes...</div>
             }
-            else if (batches.Any())
+            else if (FilteredBatches.Any())
             {
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
@@ -86,7 +102,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var batch in batches.OrderByDescending(b => b.DateCreation))
+                        @foreach (var batch in FilteredBatches)
                         {
                             <tr>
                                 <td class="fw-bold">#@batch.Id</td>
@@ -105,7 +121,7 @@
                                 <td class="text-center">@batch.TotalTransactions</td>
                                 <td class="text-end fw-bold">@batch.TotalAmount.ToString("N2") €</td>
                                 <td class="text-end">
-                                    <button class="btn btn-sm btn-outline-dark" @onclick="() => DownloadXmlAsync(batch)" disabled="@(downloadingBatchId == batch.Id)">
+                                    <button class="btn btn-sm btn-primary" @onclick="() => DownloadXmlAsync(batch)" disabled="@(downloadingBatchId == batch.Id)">
                                         @if (downloadingBatchId == batch.Id)
                                         {
                                             <span>A gerar XML...</span>
@@ -124,7 +140,7 @@
             else
             {
                 <div class="p-4 text-center text-muted">
-                    Não existem lotes registados no sistema. Utilize o formulário acima para importar um ficheiro CSV.
+                    Nenhum lote encontrado para os critérios de pesquisa selecionados.
                 </div>
             }
         </div>
@@ -135,11 +151,25 @@
     private List<TransferBatch> batches = new();
     private IBrowserFile? selectedFile;
     private string selectedOperationType = "PAGAMENTO";
+    private string batchSearchTerm = string.Empty;
+    private string batchTypeFilter = "TODOS";
     private string statusMessage = string.Empty;
     private bool isError = false;
     private bool isLoading = true;
     private bool isUploading = false;
     private int? downloadingBatchId = null;
+
+    // Filtra a lista de lotes por identificador de mensagem, data ou tipo de norma SEPA.
+    private IEnumerable<TransferBatch> FilteredBatches => batches
+        .Where(b =>
+            (batchTypeFilter == "TODOS" ||
+             (batchTypeFilter == "PAIN.008" && (b.TypeOperation == "PAIN.008" || b.TypeOperation == "COBRANCA")) ||
+             (batchTypeFilter == "PAIN.001" && (b.TypeOperation == "PAIN.001" || b.TypeOperation == "PAGAMENTO"))) &&
+            (string.IsNullOrWhiteSpace(batchSearchTerm) ||
+             (b.MsgId?.Contains(batchSearchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
+             b.DateCreation.ToString("dd/MM/yyyy").Contains(batchSearchTerm, StringComparison.OrdinalIgnoreCase) ||
+             b.Id.ToString().Contains(batchSearchTerm)))
+        .OrderByDescending(b => b.DateCreation);
 
     // Inicializa o componente e carrega a listagem de lotes existentes.
     protected override async Task OnInitializedAsync()

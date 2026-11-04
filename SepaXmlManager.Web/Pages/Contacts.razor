@@ -91,18 +91,34 @@
     }
 
     <div class="card shadow-sm border-0">
-        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 fw-bold">Lista de Contactos</h5>
-            <button class="btn btn-primary btn-sm" @onclick="LoadContactsAsync">
-                Atualizar Lista
-            </button>
+        <div class="card-header bg-white py-3">
+            <div class="row g-2 align-items-center justify-content-between">
+                <div class="col-md-3">
+                    <h5 class="mb-0 fw-bold">Lista de Contactos</h5>
+                </div>
+                <div class="col-md-9 d-flex gap-2 justify-content-md-end">
+                    <input type="text" class="form-control form-control-sm w-50"
+                           placeholder="Pesquisar por Nome, NIF, IBAN ou Mandato..."
+                           @bind="searchTerm" @bind:event="oninput" />
+
+                    <select class="form-select form-select-sm w-auto" @bind="statusFilter">
+                        <option value="TODOS">Todos os Estados</option>
+                        <option value="ATIVOS">Apenas Ativos</option>
+                        <option value="INATIVOS">Apenas Inativos</option>
+                    </select>
+
+                    <button class="btn btn-primary btn-sm" @onclick="LoadContactsAsync">
+                        Atualizar Lista
+                    </button>
+                </div>
+            </div>
         </div>
         <div class="card-body p-0">
             @if (isLoading)
             {
                 <div class="p-4 text-center text-muted">A carregar contactos...</div>
             }
-            else if (contacts.Any())
+            else if (FilteredContacts.Any())
             {
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
@@ -117,7 +133,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var contact in contacts.OrderBy(c => c.Name))
+                        @foreach (var contact in FilteredContacts)
                         {
                             <tr>
                                 <td class="fw-semibold">@contact.Name</td>
@@ -151,7 +167,7 @@
             else
             {
                 <div class="p-4 text-center text-muted">
-                    Não existem contactos registados na base de dados.
+                    Nenhum contacto encontrado para os critérios de pesquisa selecionados.
                 </div>
             }
         </div>
@@ -161,12 +177,27 @@
 @code {
     private List<Contact> contacts = new();
     private Contact currentContact = new();
+    private string searchTerm = string.Empty;
+    private string statusFilter = "TODOS";
     private bool showForm = false;
     private bool isEditing = false;
     private bool isLoading = true;
     private bool isSaving = false;
     private bool isError = false;
     private string statusMessage = string.Empty;
+
+    // Filtra dinamicamente os contactos por texto e estado de ativação.
+    private IEnumerable<Contact> FilteredContacts => contacts
+        .Where(c =>
+            (statusFilter == "TODOS" ||
+             (statusFilter == "ATIVOS" && c.IsActive) ||
+             (statusFilter == "INATIVOS" && !c.IsActive)) &&
+            (string.IsNullOrWhiteSpace(searchTerm) ||
+             (c.Name?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
+             (c.NIF?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
+             (c.IBAN?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
+             (c.MandateReference?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false)))
+        .OrderBy(c => c.Name);
 
     protected override async Task OnInitializedAsync()
     {
@@ -315,7 +346,7 @@
         }
     }
 
-    // Solicita a remoção (ou desativação lógica) do contacto através do endpoint DELETE.
+    // Solicita a remoção do contacto através do endpoint DELETE.
     private async Task DeleteContactAsync(int id)
     {
         statusMessage = string.Empty;
